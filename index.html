@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EduSpark</title>
+<style>
+:root{--p:#7c3aed;--p2:#ec4899;--y:#f59e0b;--g:#10b981;--bg:#f5f3ff;--ink:#1e1b4b;--muted:#6b7280}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Nunito","Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;display:flex;flex-direction:column}
+.hidden{display:none!important}
+.screen{flex:1;display:flex;flex-direction:column}
+.credit{background:linear-gradient(90deg,var(--p),var(--p2));color:#fff;text-align:center;padding:12px;font-weight:700;letter-spacing:.3px;margin-top:auto}
+header{background:linear-gradient(90deg,var(--p),var(--p2));color:#fff;padding:12px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+header .brand{font-size:1.4rem;font-weight:800}
+header small{opacity:.9;font-weight:600}
+.center{flex:1;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{background:#fff;border-radius:18px;padding:20px;box-shadow:0 6px 20px rgba(124,58,237,.12);margin-bottom:16px}
+.auth{width:min(380px,100%);text-align:center}
+.auth h1{margin:4px 0 6px;color:var(--p)}
+.logo{font-size:3rem}
+input{width:100%;padding:12px 14px;border:2px solid #ddd6fe;border-radius:12px;font-size:1rem;margin-bottom:10px;outline:none;font-family:inherit}
+input:focus{border-color:var(--p)}
+button{cursor:pointer;border:none;border-radius:12px;padding:10px 16px;font-weight:700;font-size:.95rem;background:linear-gradient(90deg,var(--p),var(--p2));color:#fff;font-family:inherit}
+button:hover{filter:brightness(1.08)}
+button:disabled{opacity:.5;cursor:not-allowed}
+.btn.full{width:100%}
+.btn.small{font-size:.85rem;padding:8px 10px}
+.btn-ghost{background:#fff;color:var(--p);border:2px solid var(--p)}
+.muted{color:var(--muted);font-size:.9rem}
+.error{color:#dc2626;font-weight:600}
+.layout{display:grid;grid-template-columns:280px 1fr;gap:16px;padding:16px;flex:1}
+@media(max-width:800px){.layout{grid-template-columns:1fr}}
+.side h3{margin:4px 0 10px;color:var(--p)}
+.side form{display:flex;gap:6px}
+.side form input{margin-bottom:0}
+.friend{padding:8px 0;border-bottom:1px solid #eee}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#d1d5db;margin-right:6px}
+.dot.on{background:var(--g);box-shadow:0 0 6px var(--g)}
+.fname{background:none;color:var(--ink);padding:0;font-size:1rem;text-decoration:underline}
+.friend small{display:block;color:var(--muted);margin-left:16px}
+.menu{margin:6px 0 0 16px}
+.sticker{background:linear-gradient(135deg,#fde68a,#f59e0b,#fde68a);border-radius:12px;padding:10px;margin-bottom:8px;color:#78350f;box-shadow:0 3px 10px rgba(245,158,11,.4)}
+.sticker small{display:block;color:#92400e}
+.search{display:flex;gap:10px;margin-bottom:16px}
+.search input{margin:0;font-size:1.1rem;padding:16px 18px;border-radius:999px}
+.search button{border-radius:999px;padding:0 24px}
+.quote{text-align:center;font-style:italic;font-size:1.05rem;color:var(--p)}
+.tip{background:#ecfdf5;border-left:4px solid var(--g);padding:10px;border-radius:8px}
+.hero{width:100%;max-height:300px;object-fit:cover;border-radius:14px;margin:8px 0}
+article h2{color:var(--p);margin-top:0}
+article h3{margin-bottom:4px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.grid img{width:100%;height:130px;object-fit:cover;border-radius:12px;transition:transform .2s}
+.grid img:hover{transform:scale(1.04)}
+figcaption{font-size:.8rem;color:var(--muted)}
+.badge{background:linear-gradient(90deg,#fde68a,#f59e0b);color:#78350f;padding:4px 10px;border-radius:999px;font-weight:800;font-size:.8rem}
+.milestone{background:linear-gradient(90deg,#c4b5fd,#f9a8d4);border-radius:14px;padding:14px;text-align:center;font-weight:800;margin-top:12px}
+#toast{position:fixed;bottom:60px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 18px;border-radius:12px;z-index:50;max-width:90vw}
+#banner{position:fixed;top:0;left:0;right:0;background:#fff;border-bottom:4px solid var(--p2);padding:14px;display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;z-index:40;box-shadow:0 6px 20px rgba(0,0,0,.2)}
+#banner .yes{background:var(--g)}
+#banner .no{background:#ef4444}
+#ceo{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;flex-direction:column;background:linear-gradient(135deg,#4c1d95,#be185d,#f59e0b);color:#fff;text-align:center;padding:20px}
+#ceo h1{font-size:clamp(1.8rem,6vw,3.2rem);animation:pulse .6s infinite alternate;margin:0}
+@keyframes pulse{to{transform:scale(1.07)}}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:70}
+#match{position:fixed;inset:0;z-index:55;background:rgba(30,27,75,.96);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px;overflow:auto}
+.battle{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:min(900px,100%)}
+@media(max-width:700px){.battle{grid-template-columns:1fr}}
+.panel{background:#fff;color:var(--ink);border-radius:18px;padding:18px;text-align:left}
+.panel.opp{background:#fdf2f8}
+.score{font-size:2.2rem;font-weight:900;color:var(--p)}
+.opts{display:grid;gap:8px;margin-top:10px}
+.opt{background:#f5f3ff;color:var(--ink);border:2px solid #ddd6fe;text-align:left}
+.opt:hover{background:#ede9fe}
+.result{background:#fff;color:var(--ink);border-radius:18px;padding:24px;max-width:420px;text-align:center}
+
+
+/* ===== EduSpark visual polish ===== */
+:root{
+  --p:#6d28d9;--p2:#db2777;--y:#f59e0b;--g:#059669;
+  --bg:#f7f7fc;--ink:#211b3b;--muted:#77738b;
+  --line:#e9e5f3;--surface:#fff;
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  background:radial-gradient(ellipse at top left,#f0eaff 0,transparent 42%),var(--bg);
+  color:var(--ink);line-height:1.55;
+}
+button,input{font:inherit}
+button{
+  border-radius:12px;padding:11px 17px;
+  background:linear-gradient(135deg,var(--p),var(--p2));
+  box-shadow:0 4px 10px rgba(109,40,217,.13);
+  transition:transform .16s ease,box-shadow .16s ease,filter .16s ease;
+}
+button:hover{filter:brightness(1.04);transform:translateY(-1px);box-shadow:0 7px 16px rgba(109,40,217,.18)}
+button:active{transform:translateY(0)}
+button:focus-visible,input:focus-visible{outline:3px solid #c4b5fd;outline-offset:2px}
+button:disabled{transform:none;box-shadow:none}
+input{
+  background:#fff;border:1.5px solid #e2ddef;border-radius:13px;
+  transition:border-color .18s ease,box-shadow .18s ease;
+}
+input:focus{border-color:#8b5cf6;box-shadow:0 0 0 4px rgba(139,92,246,.11)}
+.card{
+  border:1px solid rgba(226,221,239,.85);border-radius:20px;padding:22px;
+  box-shadow:0 8px 26px rgba(44,28,84,.055);margin-bottom:18px;
+}
+.auth{padding:30px 26px;border-radius:24px;box-shadow:0 18px 55px rgba(76,29,149,.12)}
+.auth .logo{display:grid;place-items:center;width:70px;height:70px;margin:0 auto 12px;border-radius:22px;
+  background:linear-gradient(135deg,#ede9fe,#fce7f3);font-size:2.35rem}
+.auth h1{font-size:2rem;letter-spacing:-.045em}
+.auth .muted{line-height:1.6}
+header{padding:15px clamp(16px,3vw,32px);background:rgba(255,255,255,.88);color:var(--ink);
+  border-bottom:1px solid var(--line);box-shadow:0 4px 18px rgba(44,28,84,.035);backdrop-filter:blur(12px)}
+header .brand{font-size:1.35rem;letter-spacing:-.035em;color:var(--p)}
+header small{color:var(--muted);opacity:1}
+.btn-ghost{background:#fff;color:var(--p);border:1px solid #d8ccf3;box-shadow:none}
+.layout{width:min(1440px,100%);margin:0 auto;padding:clamp(12px,2vw,24px);gap:20px;grid-template-columns:minmax(230px,280px) minmax(0,1fr)}
+.side{align-self:start;position:sticky;top:16px}
+.side h3,article h2{letter-spacing:-.025em}
+.side h3{font-size:1.03rem}
+.search{align-items:stretch;gap:9px}
+.search input{min-width:0;box-shadow:0 5px 18px rgba(44,28,84,.035)}
+.search button{flex-shrink:0}
+.quote{border-left:4px solid #a78bfa;color:#6d28d9;background:linear-gradient(110deg,#fff,#faf7ff);font-size:1rem}
+article h2{font-size:1.65rem;line-height:1.2}
+article h3{margin-top:22px;color:#4c1d95}
+article p,article li{line-height:1.75}
+.tip{border-radius:12px;background:#ecfdf5;border-left-color:#10b981;line-height:1.6}
+.grid{gap:14px}
+.grid figure{background:#fff;border:1px solid var(--line);padding:8px;border-radius:15px;overflow:hidden}
+.grid img{height:145px;display:block}
+figcaption{padding:6px 3px 2px;overflow-wrap:anywhere}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:5px 11px}
+.sticker{border:1px solid #f4d58c;box-shadow:none}
+.milestone{box-shadow:0 8px 20px rgba(124,58,237,.1)}
+.panel{box-shadow:0 12px 35px rgba(0,0,0,.1)}
+.opt{box-shadow:none;border-color:#e3daf8}
+.opt:hover{transform:none;box-shadow:none}
+.credit{margin-top:auto;padding:13px 16px;background:#211b3b;font-size:.88rem;letter-spacing:.15px}
+#toast{box-shadow:0 10px 30px rgba(0,0,0,.2)}
+#banner{padding:16px;border-radius:0 0 18px 18px}
+#match{background:rgba(25,18,48,.97)}
+@media(max-width:800px){
+  .layout{grid-template-columns:minmax(0,1fr);padding:12px;gap:12px}
+  .side{position:static}
+  .card{padding:18px;border-radius:17px}
+  .search input{font-size:1rem;padding:13px 15px}
+  .search button{padding:0 16px}
+  header{padding:13px 15px}
+  header .brand{font-size:1.2rem}
+}
+@media(max-width:420px){
+  .auth{padding:24px 18px}
+  .search{gap:7px}
+  .search button{padding:0 12px}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation-duration:.01ms!important;animation-iteration-count:1!important}
+}
+
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<section id="login" class="screen">
+  <div class="center">
+    <div class="card auth">
+      <div class="logo">🚀</div>
+      <h1>EduSpark</h1>
+      <p class="muted">Sign in to start learning. New username? Just create a password.</p>
+      <form id="authForm" autocomplete="off">
+        <input id="u" name="eduser" placeholder="Username" autocomplete="off" required>
+        <input id="p" name="edpass" type="password" placeholder="Password" autocomplete="new-password" required>
+        <button class="btn full">Sign In</button>
+      </form>
+      <p id="authMsg" class="error"></p>
+    </div>
+  </div>
+  <footer class="credit">Made by V.V.Harsha Varshan</footer>
+</section>
+
+<!-- APP -->
+<section id="app" class="screen hidden">
+  <header>
+    <div>
+      <div class="brand">🚀 EduSpark</div>
+      <small>Made by V.V.Harsha Varshan</small>
+    </div>
+    <div>
+      <span id="badge" class="badge hidden">👑 ULTRA PREMIUM</span>
+      <span id="who" style="margin:0 10px;font-weight:700"></span>
+      <button class="btn-ghost" id="logout">Log out</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="card side">
+      <h3>👥 Friends</h3>
+      <form id="addF">
+        <input id="fName" placeholder="Friend's username" autocomplete="off">
+        <button class="btn">Add</button>
+      </form>
+      <div id="friends" style="margin-top:10px"></div>
+      <h3 style="margin-top:20px">🏆 Trophy Showcase</h3>
+      <div id="trophies"></div>
+    </aside>
+
+    <main>
+      <form id="searchF" class="search">
+        <input id="q" placeholder="Search any topic… e.g. Photosynthesis, Black Holes" autocomplete="off">
+        <button class="btn">Explain</button>
+      </form>
+      <div id="quote" class="card quote"></div>
+      <div id="out">
+        <div class="card muted">Type a topic above to start learning. Your lesson, images and quiz will appear here.</div>
+      </div>
+    </main>
+  </div>
+  <footer class="credit">Made by V.V.Harsha Varshan</footer>
+</section>
+
+<!-- CEO CELEBRATION -->
+<div id="ceo" class="hidden">
+  <h1>Welcome CEO!<br>Ultra Premium Mode Activated!</h1>
+  <p>👑 10-question quizzes · Premium badge unlocked</p>
+</div>
+
+<!-- CHALLENGE BANNER -->
+<div id="banner" class="hidden">
+  <strong id="bannerText"></strong>
+  <button class="yes" id="bYes">Yes</button>
+  <button class="no" id="bNo">No</button>
+</div>
+
+<!-- CO-OP / SOLO MATCH -->
+<div id="match" class="hidden">
+  <h2 id="mTopic" style="margin:0;color:#fff;text-align:center"></h2>
+  <div id="mGame" style="width:100%;display:flex;flex-direction:column;align-items:center;gap:14px">
+    <div class="battle">
+      <div class="panel">
+        <strong id="mYouName"></strong>
+        <div class="score" id="mMe">0</div>
+        <small class="muted" id="mProg"></small>
+        <p id="mQ" style="font-size:1.1rem;font-weight:700"></p>
+        <div class="opts" id="mOpts"></div>
+        <button class="btn-ghost btn small" id="mLeave" style="margin-top:12px">Leave match</button>
+      </div>
+      <div class="panel opp" id="mOppPanel">
+        <strong id="mOppName"></strong>
+        <div class="score" id="mOp">0</div>
+        <small class="muted">Progress: <span id="mOppProg"></span></small>
+        <p class="muted">Your opponent's score updates live as they answer.</p>
+      </div>
+    </div>
+  </div>
+  <div id="mResult" class="hidden"></div>
+</div>
+
+<canvas id="fx"></canvas>
+<div id="toast" class="hidden"></div>
+
+<script>
+/* ================= HELPERS ================= */
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pick = a => a[Math.random() * a.length | 0];
+const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.random() * (i + 1) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+/* Storage: uses localStorage when allowed, falls back to memory when blocked */
+const DB_KEY = 'eduspark_users_v2';
+let memDb = {};
+function db(){
+  try { const raw = localStorage.getItem(DB_KEY); if (raw) memDb = JSON.parse(raw); } catch (e) {}
+  return memDb;
+}
+function saveDb(d){
+  memDb = d;
+  try { localStorage.setItem(DB_KEY, JSON.stringify(d)); } catch (e) {}
+}
+
+let toastTimer;
+function toast(msg){
+  const t = $('toast'); t.textContent = msg; t.classList.remove('hidden');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.add('hidden'), 3500);
+}
+
+const QUOTES = [
+  '“The beautiful thing about learning is that nobody can take it away from you.” — B.B. King',
+  '“Education is the passport to the future.” — Malcolm X',
+  '“Success is the sum of small efforts repeated day in and day out.” — R. Collier',
+  '“The more that you read, the more things you will know.” — Dr. Seuss',
+  '“Believe you can and you’re halfway there.” — T. Roosevelt',
+  '“Learning never exhausts the mind.” — Leonardo da Vinci'
+];
+const TIPS = [
+  'Explain the topic out loud in your own words. If you can teach it, you know it.',
+  'Use spaced repetition: review after 1 day, 3 days, then 1 week.',
+  'Draw a quick diagram or mind map to connect the main ideas.',
+  'Take a 5-minute break every 25 minutes (Pomodoro technique).',
+  'Test yourself before you feel ready. Quizzes build memory.',
+  'Write three bullet points from memory right after reading.'
+];
+const MILESTONES = {
+  1: '🌱 First topic studied!',
+  3: '🔥 3 topics mastered!',
+  5: '🏅 5 topics conquered!',
+  10: '👑 10 topics! You are an EduSpark legend!'
+};
+
+/* ================= CONFETTI ================= */
+function confetti(ms = 3000){
+  const c = $('fx'), ctx = c.getContext('2d');
+  c.width = innerWidth; c.height = innerHeight;
+  const colors = ['#f59e0b','#ec4899','#7c3aed','#10b981','#3b82f6'];
+  const ps = Array.from({length: 180}, () => ({
+    x: Math.random() * c.width, y: -20 - Math.random() * c.height * .5,
+    vx: (Math.random() - .5) * 4, vy: 2 + Math.random() * 4,
+    s: 6 + Math.random() * 6, c: pick(colors)
+  }));
+  const end = performance.now() + ms;
+  (function frame(t){
+    ctx.clearRect(0, 0, c.width, c.height);
+    ps.forEach(p => { p.x += p.vx; p.y += p.vy; ctx.fillStyle = p.c; ctx.fillRect(p.x, p.y, p.s, p.s / 2); });
+    if (t < end) requestAnimationFrame(frame); else ctx.clearRect(0, 0, c.width, c.height);
+  })(performance.now());
+}
+
+/* Show any runtime error on the login card so nothing fails silently */
+window.addEventListener('error', e => { $('authMsg').textContent = 'Error: ' + e.message; });
+
+/* ================= AUTH ================= */
+let me = null; // { name, ceo }
+
+function clearLoginFields(){ $('u').value = ''; $('p').value = ''; $('authMsg').textContent = ''; }
+clearLoginFields();
+window.addEventListener('pageshow', clearLoginFields);
+
+$('authForm').addEventListener('submit', e => {
+  e.preventDefault();
+  try {
+    const name = $('u').value.trim(), pass = $('p').value;
+    if (!name || !pass) return $('authMsg').textContent = 'Please enter both fields.';
+    if (name === 'Harsha') {
+      if (pass !== '12345') return $('authMsg').textContent = 'That username is reserved.';
+      return ceoLaunch();
+    }
+    const users = db();
+    if (users[name]) {
+      if (users[name].pass !== pass) return $('authMsg').textContent = 'Wrong password.';
+    } else {
+      users[name] = { pass, trophies: [], friends: [], studied: [] };
+      saveDb(users);
+    }
+    signIn(name, false);
+  } catch (err) {
+    $('authMsg').textContent = 'Sign-in error: ' + err.message;
+  }
+});
+
+function ceoLaunch(){
+  const users = db();
+  users.Harsha = users.Harsha || { pass: '12345', trophies: [], friends: [], studied: [] };
+  saveDb(users);
+  $('ceo').classList.remove('hidden');
+  confetti(3500);
+  setTimeout(() => { $('ceo').classList.add('hidden'); signIn('Harsha', true); }, 3800);
+}
+
+function signIn(name, ceo){
+  me = { name, ceo };
+  $('login').classList.add('hidden');
+  $('app').classList.remove('hidden');
+  $('who').textContent = '👋 ' + name;
+  $('badge').classList.toggle('hidden', !ceo);
+  $('quote').textContent = pick(QUOTES);
+  clearLoginFields();
+  renderFriends(); renderTrophies();
+}
+
+$('logout').onclick = () => {
+  me = null; currentLesson = null; openFriend = null;
+  $('app').classList.add('hidden');
+  $('login').classList.remove('hidden');
+  clearLoginFields();
+};
+
+/* ================= PRESENCE + MESSAGING =================
+   Uses BroadcastChannel when available. If the browser lacks it,
+   falls back to localStorage events so the app still runs. */
+const bc = (() => {
+  try {
+    if (typeof BroadcastChannel !== 'undefined') return new BroadcastChannel('eduspark-v2');
+  } catch (e) {}
+  const api = {
+    onmessage: null,
+    postMessage(m){
+      try { localStorage.setItem('eduspark_bus', JSON.stringify({ m, t: Date.now() + Math.random() })); } catch (e) {}
+    }
+  };
+  window.addEventListener('storage', ev => {
+    if (ev.key === 'eduspark_bus' && ev.newValue && api.onmessage) {
+      try { api.onmessage({ data: JSON.parse(ev.newValue).m }); } catch (e) {}
+    }
+  });
+  return api;
+})();
+
+const seen = new Map();           // username -> last heartbeat timestamp
+const ONLINE_MS = 8000;
+const isOnline = u => Date.now() - (seen.get(u) || 0) < ONLINE_MS;
+let openFriend = null;
+
+setInterval(() => { if (me) bc.postMessage({ type: 'hb', user: me.name }); }, 3000);
+setInterval(() => { if (me) renderFriends(); }, 4000);
+
+/* ================= FRIENDS ================= */
+$('addF').addEventListener('submit', e => {
+  e.preventDefault();
+  const name = $('fName').value.trim();
+  $('fName').value = '';
+  if (!name) return;
+  if (name === me.name) return toast("You can't add yourself!");
+  const users = db();
+  if (!users[name]) return toast(`No user named "${name}" yet.`);
+  const mine = users[me.name], theirs = users[name];
+  mine.friends = mine.friends || []; theirs.friends = theirs.friends || [];
+  if (mine.friends.includes(name)) return toast(`${name} is already your friend.`);
+  mine.friends.push(name);
+  if (!theirs.friends.includes(me.name)) theirs.friends.push(me.name);
+  saveDb(users);
+  renderFriends();
+  toast(`You are now friends with ${name}! 🎉`);
+});
+
+function renderFriends(){
+  if (!me) return;
+  const list = (db()[me.name] || {}).friends || [];
+  $('friends').innerHTML = list.length
+    ? list.map(f => {
+        const on = isOnline(f);
+        return `<div class="friend">
+          <button class="fname" data-f="${esc(f)}"><span class="dot ${on ? 'on' : ''}"></span>${esc(f)}</button>
+          <small>${on ? 'Online · ready to study' : 'Offline'}</small>
+          <div class="menu ${openFriend === f ? '' : 'hidden'}">
+            <button class="btn small" data-challenge="${esc(f)}">⚔️ Send Co-Op Quiz Challenge</button>
+          </div>
+        </div>`;
+      }).join('')
+    : '<p class="muted">No friends yet. Add a username above!</p>';
+}
+
+$('friends').addEventListener('click', e => {
+  const ch = e.target.closest('[data-challenge]');
+  if (ch) return sendChallenge(ch.dataset.challenge);
+  const f = e.target.closest('[data-f]');
+  if (f) { openFriend = openFriend === f.dataset.f ? null : f.dataset.f; renderFriends(); }
+});
+
+/* ================= TROPHIES ================= */
+function renderTrophies(){
+  if (!me) return;
+  const t = (db()[me.name] || {}).trophies || [];
+  $('trophies').innerHTML = t.length
+    ? t.map(x => `<div class="sticker">🏆 <strong>${esc(x.topic)}</strong>
+        <small>vs ${esc(x.vs)} · ${esc(x.score)} · ${esc(x.date)}</small></div>`).join('')
+    : '<p class="muted">Win a Co-Op battle to earn a shiny trophy!</p>';
+}
+function addTrophy(t){
+  const users = db();
+  users[me.name].trophies = users[me.name].trophies || [];
+  users[me.name].trophies.push(t);
+  saveDb(users);
+  renderTrophies();
+}
+
+/* ================= CONTENT: Wikipedia + Wikimedia Commons (free, no keys) ================= */
+async function fetchArticle(topic){
+  const url = `https://en.wikipedia.org/w/api.php?action=query&prop=extracts|pageimages&explaintext=1&piprop=thumbnail&pithumbsize=700&redirects=1&titles=${encodeURIComponent(topic)}&format=json&origin=*`;
+  const data = await (await fetch(url)).json();
+  const page = Object.values(data.query.pages)[0];
+  if (!page || page.missing !== undefined) throw new Error(`No article found for "${topic}". Try another term.`);
+  return { title: page.title, text: page.extract || '', thumb: page.thumbnail?.source || null };
+}
+
+async function fetchImages(topic){
+  const url = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(topic)}+filetype:bitmap&gsrnamespace=6&gsrlimit=12&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=400&format=json&origin=*`;
+  const d = await (await fetch(url)).json();
+  return Object.values(d.query?.pages || {}).filter(p => p.imageinfo).map(p => {
+    const i = p.imageinfo[0];
+    return {
+      thumb: i.thumburl, page: i.descriptionurl,
+      license: i.extmetadata?.LicenseShortName?.value || 'Free licence',
+      title: p.title.replace(/^File:/, '').replace(/\.\w+$/, '')
+    };
+  });
+}
+
+const SKIP_SECTIONS = /^(see also|references|external links|notes|further reading|bibliography|citations|sources)$/i;
+function parseLesson(text){
+  const secs = [];
+  let cur = { h: 'Overview', lines: [] }, skipping = false;
+  for (const raw of text.split('\n')) {
+    const line = raw.trim();
+    if (!line) continue;
+    const m = line.match(/^=+\s*(.+?)\s*=+$/);
+    if (m) { secs.push(cur); cur = { h: m[1], lines: [] }; skipping = SKIP_SECTIONS.test(m[1]); continue; }
+    if (!skipping) cur.lines.push(line);
+  }
+  secs.push(cur);
+  return secs.filter(s => s.lines.length).slice(0, 6).map(s => {
+    const sentences = s.lines.join(' ').split(/(?<=[.!?])\s+/).filter(x => x.length > 20);
+    return { h: s.h, intro: sentences.slice(0, 2).join(' '), bullets: sentences.slice(2, 6) };
+  }).filter(s => s.intro);
+}
+
+const STOP = new Set(('about which these those their there where while after before being other since using often because ' +
+  'through between within called known such also have been were with from that this they them into than then will would ' +
+  'could should many most some each more only over under made make being there here whose what when').split(' '));
+function buildQuiz(text, max){
+  const lines = text.split('\n').map(l => l.trim()).filter(l => l && !/^=+.*=+$/.test(l));
+  const sents = lines.join(' ').split(/(?<=[.!?])\s+/).filter(s => s.length >= 50 && s.length <= 220);
+  const termsOf = s => [...new Set((s.match(/\b[A-Za-z][a-z]{4,}\b/g) || []).filter(w => !STOP.has(w.toLowerCase())))];
+  const pool = [...new Set(sents.flatMap(termsOf))];
+  const qs = [], used = new Set();
+  for (const s of shuffle([...sents])) {
+    if (qs.length >= max) break;
+    const terms = termsOf(s).filter(w => !used.has(w));
+    if (!terms.length) continue;
+    const ans = pick(terms);
+    const distract = shuffle(pool.filter(w => w !== ans && !s.includes(w))).slice(0, 3);
+    if (distract.length < 3) continue;
+    used.add(ans);
+    qs.push({
+      q: 'Fill in the blank: ' + s.replace(new RegExp('\\b' + ans + '\\b'), '_____'),
+      options: shuffle([ans, ...distract]),
+      answer: ans
+    });
+  }
+  return qs;
+}
+
+/* ================= EXPLAINER ================= */
+let currentLesson = null; // { title, thumb, sections, quiz }
+
+$('searchF').addEventListener('submit', e => {
+  e.preventDefault();
+  const t = $('q').value.trim();
+  if (t) study(t);
+});
+
+async function study(topic){
+  $('quote').textContent = pick(QUOTES);
+  $('out').innerHTML = '<div class="card">🔎 Gathering your lesson…</div>';
+  try {
+    const [art, imgs] = await Promise.all([fetchArticle(topic), fetchImages(topic).catch(() => [])]);
+    const max = me.ceo ? 10 : 8;
+    currentLesson = {
+      title: art.title, thumb: art.thumb,
+      sections: parseLesson(art.text),
+      quiz: buildQuiz(art.text, max)
+    };
+    if (currentLesson.quiz.length < 5) currentLesson.quizNote = `Only ${currentLesson.quiz.length} questions could be made from this article.`;
+    renderLesson(currentLesson, imgs);
+    recordStudy(art.title);
+  } catch (err) {
+    $('out').innerHTML = `<div class="card error">${esc(err.message)}</div>`;
+  }
+}
+
+function renderLesson(l, imgs){
+  const tip = pick(TIPS);
+  const n = l.quiz.length;
+  $('out').innerHTML = `
+    <article class="card">
+      <h2>${esc(l.title)}</h2>
+      ${l.thumb ? `<img class="hero" src="${esc(l.thumb)}" alt="${esc(l.title)}">` : ''}
+      ${l.sections.map(s => `<h3>${esc(s.h)}</h3><p>${esc(s.intro)}</p>${s.bullets.length ? `<ul>${s.bullets.map(b => `<li>${esc(b)}</li>`).join('')}</ul>` : ''}`).join('')
+        || '<p class="muted">This article has limited text. Try a more specific topic.</p>'}
+      <p class="tip">💡 <strong>Study tip:</strong> ${esc(tip)}</p>
+      <p class="muted">Text source: Wikipedia (CC BY-SA)</p>
+    </article>
+    <div class="card">
+      <h3>🖼️ Free educational images</h3>
+      <div class="grid">${imgs.map(i => `
+        <figure style="margin:0">
+          <a href="${esc(i.page)}" target="_blank" rel="noopener"><img src="${esc(i.thumb)}" loading="lazy" alt="${esc(i.title)}"></a>
+          <figcaption>${esc(i.title)}<br><small>${esc(i.license)}</small></figcaption>
+        </figure>`).join('') || '<p class="muted">No images found for this topic.</p>'}
+      </div>
+    </div>
+    <div class="card">
+      <h3>🏆 Co-Op Quiz: ${n} questions</h3>
+      ${l.quizNote ? `<p class="muted">${esc(l.quizNote)}</p>` : ''}
+      <p class="muted">Click a friend's name in the sidebar to send them a challenge on this topic.</p>
+      <button id="soloBtn" class="btn" ${n ? '' : 'disabled'}>📝 Practice Solo</button>
+    </div>
+    <div id="milestone"></div>`;
+  $('soloBtn').onclick = () => startMatch({ solo: true, opp: null, id: null, topic: l.title, questions: l.quiz });
+}
+
+function recordStudy(title){
+  const users = db();
+  const p = users[me.name];
+  p.studied = p.studied || [];
+  if (p.studied.includes(title)) return;
+  p.studied.push(title);
+  saveDb(users);
+  const count = p.studied.length;
+  if (MILESTONES[count]) {
+    const el = $('milestone');
+    if (el) el.innerHTML = `<div class="milestone">🎉 ${MILESTONES[count]}</div>`;
+    toast('🎉 Milestone unlocked!');
+    confetti(2500);
+  }
+}
+
+/* ================= CO-OP CHALLENGE ================= */
+let pendingOut = null;  // challenge I sent, waiting for acceptance
+let pendingIn = null;   // challenge I received
+
+function sendChallenge(to){
+  if (!currentLesson || !currentLesson.quiz.length) return toast('Search a topic with a quiz first!');
+  if (!isOnline(to)) return toast(`${to} is offline right now.`);
+  const id = Math.random().toString(36).slice(2);
+  pendingOut = { id, to, topic: currentLesson.title, questions: currentLesson.quiz };
+  bc.postMessage({ type: 'challenge', id, from: me.name, to, topic: currentLesson.title, questions: currentLesson.quiz });
+  openFriend = null; renderFriends();
+  toast(`Challenge sent to ${to}! ⚔️`);
+}
+
+$('bYes').onclick = () => {
+  const c = pendingIn; if (!c) return;
+  $('banner').classList.add('hidden');
+  pendingIn = null;
+  bc.postMessage({ type: 'accept', id: c.id, from: me.name, to: c.from });
+  startMatch({ solo: false, id: c.id, opp: c.from, topic: c.topic, questions: c.questions });
+};
+$('bNo').onclick = () => {
+  const c = pendingIn; if (!c) return;
+  $('banner').classList.add('hidden');
+  bc.postMessage({ type: 'decline', id: c.id, from: me.name, to: c.from });
+  pendingIn = null;
+};
+
+function showBanner(c){
+  if (match && !match.ended) return; // already in a battle
+  pendingIn = c;
+  $('bannerText').textContent = `Join ${c.from} for a quick quiz? (${c.topic})`;
+  $('banner').classList.remove('hidden');
+}
+
+bc.onmessage = ({ data: m }) => {
+  if (m.type === 'hb') {
+    const was = isOnline(m.user);
+    seen.set(m.user, Date.now());
+    if (!was && me) renderFriends();
+    return;
+  }
+  if (!me || m.to !== me.name) return;
+  switch (m.type) {
+    case 'challenge': return showBanner(m);
+    case 'accept':
+      if (pendingOut && pendingOut.id === m.id) {
+        const p = pendingOut; pendingOut = null;
+        return startMatch({ solo: false, id: p.id, opp: m.from, topic: p.topic, questions: p.questions });
+      }
+      return;
+    case 'decline': return toast(`${m.from} declined the challenge.`);
+    case 'progress':
+      if (match && !match.solo && match.id === m.id && !match.ended) {
+        match.oppScore = m.score; match.oppIdx = m.idx; match.oppDone = m.done;
+        renderMatch(); checkEnd();
+      }
+      return;
+    case 'leave':
+      if (match && !match.solo && match.id === m.id && !match.ended) {
+        match.oppLeft = true; match.oppDone = true;
+        finish(); // the remaining player wins by forfeit
+      }
+      return;
+  }
+};
+
+/* ================= MATCH ================= */
+let match = null;
+
+function startMatch({ solo, id, opp, topic, questions }){
+  match = { solo, id, opp, topic, questions, idx: 0, score: 0, done: false,
+            oppScore: 0, oppIdx: 0, oppDone: !!solo, oppLeft: false, leftByMe: false, ended: false };
+  $('banner').classList.add('hidden');
+  pendingIn = null;
+  $('match').classList.remove('hidden');
+  $('mGame').classList.remove('hidden');
+  $('mResult').classList.add('hidden');
+  $('mTopic').textContent = (solo ? '📝 Practice · ' : '⚔️ Co-Op Battle · ') + topic;
+  $('mYouName').textContent = me.name + (me.ceo ? ' 👑' : '');
+  $('mOppName').textContent = solo ? '' : opp;
+  $('mLeave').classList.toggle('hidden', !!solo);
+  renderMatch();
+}
+
+function renderMatch(){
+  const m = match; if (!m) return;
+  const total = m.questions.length;
+  $('mMe').textContent = m.score;
+  $('mOp').textContent = m.solo ? '' : m.oppScore;
+  $('mOppPanel').classList.toggle('hidden', m.solo);
+  $('mOppProg').textContent = `${m.oppIdx}/${total}${m.oppDone ? ' ✓' : ''}`;
+  $('mProg').textContent = m.done ? `Finished ${total} of ${total}` : `Question ${m.idx + 1} of ${total}`;
+  if (m.done) {
+    $('mQ').textContent = m.solo ? '' : `✅ Done! Waiting for ${m.opp} to finish…`;
+    $('mOpts').innerHTML = '';
+    return;
+  }
+  const q = m.questions[m.idx];
+  $('mQ').textContent = q.q;
+  $('mOpts').innerHTML = q.options.map(o => `<button class="opt" data-o="${esc(o)}">${esc(o)}</button>`).join('');
+}
+
+$('mOpts').addEventListener('click', e => {
+  const b = e.target.closest('.opt');
+  if (!b || !match || match.done || match.ended) return;
+  const m = match, q = m.questions[m.idx];
+  if (b.dataset.o === q.answer) m.score++;
+  m.idx++;
+  if (m.idx >= m.questions.length) m.done = true;
+  if (!m.solo) bc.postMessage({ type: 'progress', id: m.id, from: me.name, to: m.opp, score: m.score, idx: m.idx, done: m.done });
+  renderMatch();
+  checkEnd();
+});
+
+$('mLeave').onclick = () => {
+  if (!match || match.ended) return;
+  bc.postMessage({ type: 'leave', id: match.id, from: me.name, to: match.opp });
+  match.leftByMe = true;
+  finish();
+};
+
+function checkEnd(){
+  const m = match;
+  if (!m || m.ended) return;
+  if (m.done && (m.solo || m.oppDone)) finish();
+}
+
+function finish(){
+  const m = match; if (!m || m.ended) return;
+  m.ended = true;
+  $('mGame').classList.add('hidden');
+  const res = $('mResult');
+  res.classList.remove('hidden');
+  const total = m.questions.length;
+
+  if (m.solo) {
+    res.innerHTML = `<div class="result"><h2>Practice complete!</h2>
+      <p>You scored <strong>${m.score}/${total}</strong>.</p>
+      <button class="btn" onclick="closeMatch()">Close</button></div>`;
+    return;
+  }
+
+  let won, title, line;
+  if (m.leftByMe) {
+    won = false; title = '🚪 You left the match';
+    line = `${esc(m.opp)} wins by forfeit. Rematch anytime!`;
+  } else if (m.oppLeft) {
+    won = true; title = '🏆 Victory by forfeit!';
+    line = `${esc(m.opp)} left the match. A Trophy Sticker was added to your showcase!`;
+  } else {
+    won = m.score > m.oppScore;
+    const tie = m.score === m.oppScore;
+    title = won ? '🏆 Victory!' : tie ? "🤝 It's a tie!" : '💪 Good effort!';
+    line = won ? `You beat ${esc(m.opp)} ${m.score}-${m.oppScore}. A Trophy Sticker was added to your showcase!`
+      : tie ? `Both scored ${m.score}. Rematch anytime!`
+      : `${esc(m.opp)} won ${m.oppScore}-${m.score}. Keep practicing, you'll get them next time!`;
+  }
+
+  if (won) {
+    addTrophy({ topic: m.topic, vs: m.opp, score: `${m.score}-${m.oppScore}`, date: new Date().toLocaleDateString() });
+    confetti(4500);
+  }
+  res.innerHTML = `<div class="result">
+    <div style="font-size:3rem">${won ? '🏆' : '📚'}</div>
+    <h2>${title}</h2><p>${line}</p>
+    <button class="btn" onclick="closeMatch()">Close</button></div>`;
+}
+
+function closeMatch(){
+  match = null; pendingOut = null;
+  $('match').classList.add('hidden');
+  $('mResult').classList.add('hidden');
+  $('mGame').classList.remove('hidden');
+}
+</script>
+</body>
+</html>
